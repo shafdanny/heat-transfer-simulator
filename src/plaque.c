@@ -8,6 +8,21 @@ float cell[16][16];
 float *cellule = NULL;
 
 /**
+ * Afficher les cellules. Utilisation pour debogage, 
+ * seulement pour des petits tailles.
+ */
+void display(int nbLigne){
+	int i,j;
+	
+	for(i=0; i<nbLigne*nbLigne; i++){
+		if(i%nbLigne == 0)
+			printf("\n");
+		printf("|%4.0f| ", cellule[i]);
+	}
+	printf("\n");
+}
+
+/**
  * La taille de plaque est defini par une valeur s donne en argument de program.
  * La plaque aura 2**(s+4) cases sur une ligne, et 2**(s+4) colonne. 
  */ 
@@ -37,27 +52,14 @@ void plaqueInit(int s) {
 		if(i%16 >= zoneInterneMin && i%16 < zoneInterneMax
 			&& j >= zoneInterneMin && j < zoneInterneMax)
 			cellule[i] = TEMP_CHAUD;
+		else
+			cellule[i] = TEMP_FROID;
 	}
 	
 	//printf("2**n-1 : %d \n", 1 << (s+3));
 	//printf("2**n-4 : %d \n", 1 << (s));
 	
 	display(nbLigne);
-}
-
-/**
- * Afficher les cellules. Utilisation pour debogage, 
- * seulement pour des petits tailles.
- */
-void display(int nbLigne){
-	int i,j;
-	
-	for(i=0; i<nbLigne*nbLigne; i++){
-		if(i%nbLigne == 0)
-			printf("\n");
-		printf("|%4.0f| ", cellule[i]);
-	}
-	printf("\n");
 }
 
 void printIntro(){
