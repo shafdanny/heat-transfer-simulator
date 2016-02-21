@@ -9,7 +9,7 @@ SRCDIR = src
 OBJDIR = bin/obj
 BINDIR = bin
 
-_OBJ = main.o
+_OBJ = main.o plaque.o
 OBJ = $(patsubst %, $(OBJDIR)/%,$(_OBJ))
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c 

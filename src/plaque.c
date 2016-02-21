@@ -1,14 +1,14 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
+#include <sys/resource.h>
+#include "plaque.h"
 
 #define TEMP_CHAUD 255
 #define TEMP_FROID 0
 
 #define H 6
-
-bool isZoneInterne(int i, int s);
 
 
 float *cellPrev = NULL;
@@ -17,6 +17,7 @@ float *cellCurr = NULL;
 int s = 0;
 int nbLigne = 0;
 int nbCell = 0;
+int nbIteration = 0;
 
 void copyPlaque(float *plOrigin, float *plDest, int nbCell) {
 	int i;
@@ -57,17 +58,6 @@ void diffusionHorizontale() {
 
 			cellCurr[i] = (prevRightCell + (H-2)*(cellPrev[i]) + prevLeftCell)/H;
 		}
-
-		/**
-		if(!isZoneInterne(i+1,0)) {
-			//printf("Updating right cell %d with value %f \n", i+1, cellPrev[i]/6);
-			cellCurr[i+1] += cellPrev[i+1] + cellPrev[i]/6;
-		}
-
-		if(!isZoneInterne(i-1,0)) {
-			//printf("Updating left  cell %d with value %f \n", i-1, cellPrev[i]/6);
-			cellCurr[i-1] += cellPrev[i-1] + cellPrev[i]/6;
-		}**/
 	}
 }
 
@@ -129,13 +119,14 @@ bool isZoneInterne(int i, int s) {
  * La taille de plaque est defini par une valeur s donne en argument de program.
  * La plaque aura 2**(s+4) cases sur une ligne, et 2**(s+4) colonne. 
  */ 
-void plaqueInit(int argS) {
+void plaqueInit(int argS, int nbIter, int aflag) {
 
 	s = argS;
  	nbLigne = 1 << ((s+4));
 	nbCell = nbLigne*nbLigne;	
-	
-	printf("Will create %d row and line, so %d cell \n", nbLigne, nbCell);
+	nbIteration = nbIter;
+
+	printf("Plaque taille %d*%d \n", nbLigne, nbLigne);
 	cellCurr = (float*)malloc(nbCell*sizeof(float));
 	cellPrev = (float*)malloc(nbCell*sizeof(float));
 
@@ -149,17 +140,34 @@ void plaqueInit(int argS) {
 			cellCurr[i] = TEMP_FROID;
 	}
 	
-	printf("\n========= BEFORE ITERATION ===========\n");
-	display(cellCurr, nbLigne);
-
-	for(i=0;i<10000;i++){
-		updatePlaque();
+	if(aflag) {
+		printf("\n========= BEFORE ITERATION ===========\n");
+		display(cellCurr, nbLigne);
 	}
 
-	printf("\n========= AFTER ITERATION ===========\n");
-	display(cellCurr, nbLigne);
+	// Pour l'instant, c'est que scenario 0 10 fois
+	executeScenario(0, 10);
 
-	//updatePlaque();
-	//updatePlaque();
+	if(aflag) {
+		printf("\n========= AFTER %d ITERATION ===========\n", nbIter);
+		display(cellCurr, nbLigne);
+	}
+
+	int who = RUSAGE_SELF;
+	struct rusage usage;
+	int ret;
+
+	ret = getrusage(who, &usage);
+	printf("Temps de reponse utilisateur: %d us \n", usage.ru_utime.tv_usec);
+	printf("Temps CPU consumme: %d us \n", usage.ru_stime.tv_usec);
+	printf("Empreinte memoire max: %ld kb \n", usage.ru_maxrss);
+
+}
+
+void executeScenario(int numScenario, int nbRepetition) {
+	int i,j;
+	for(i=0;i<nbIteration;i++){
+		updatePlaque();
+	}
 }
 
