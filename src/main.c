@@ -69,7 +69,6 @@ int main(int argc, char **argv){
 	for (index = optind; index < argc; index++)
 		printf ("Non-option argument %s\n", argv[index]);
 	
-	printIntro();
 	plaqueInit(atoi(svalue));
 	return 0;
 

@@ -166,7 +166,3 @@ void plaqueInit(int argS) {
 	//updatePlaque();
 }
 
-void printIntro(){
-	printf("Creation de plaque ...\n");
-}
-
