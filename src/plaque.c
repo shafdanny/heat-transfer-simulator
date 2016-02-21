@@ -14,7 +14,8 @@ bool isZoneInterne(int i, int s);
 float *cellPrev = NULL;
 float *cellCurr = NULL;
 
-
+int s = 0;
+int nbLigne = 0;
 
 void copyPlaque(float *plOrigin, float *plDest, int nbCell) {
 	int i;
@@ -33,7 +34,7 @@ void display(float *cell, int nbLigne) {
 	for(i=0; i<nbLigne*nbLigne; i++){
 		if(i%nbLigne == 0)
 			printf("\n");
-		printf("|%4.0f| ", cell[i]);
+		printf("|%5.1f| ", cell[i]);
 	}
 	printf("\n");
 }
@@ -43,8 +44,14 @@ void diffusionHorizontale() {
 
 	for(i=0; i<16*16; i++) {
 		//printf("Checking cell %d \n", i);
+		float prevLeftCell = 0.0;
+		float prevRightCell = 0.0;
+
 		if(!isZoneInterne(i,0)) {
-			cellCurr[i] = (cellPrev[i+1] + (H-2)*(cellPrev[i]) + cellPrev[i-1])/H;
+			prevLeftCell = (i%nbLigne == 0) ? TEMP_FROID : cellPrev[i-1];
+			prevRightCell = (i%nbLigne == nbLigne-1) ? TEMP_FROID : cellPrev[i+1];
+
+			cellCurr[i] = (prevRightCell + (H-2)*(cellPrev[i]) + prevLeftCell)/H;
 		}
 
 		/**
@@ -60,28 +67,47 @@ void diffusionHorizontale() {
 	}
 }
 
+void diffusionVerticale() {
+	int i;
+
+	for(i=0; i<16*16; i++) {
+
+		float prevTopCell = 0.0;
+		float prevBottomCell = 0.0;
+
+		//printf("Checking cell %d \n", i);
+		if(!isZoneInterne(i,0)) {
+			prevTopCell = (i/nbLigne == 0) ? TEMP_FROID : cellPrev[i-nbLigne];
+			prevBottomCell = (i/nbLigne == nbLigne-1) ? TEMP_FROID : cellPrev[i+nbLigne];
+
+			cellCurr[i] = (prevTopCell + (H-2)*(cellPrev[i]) + prevBottomCell)/H;
+		}
+	}
+}
+
 void updatePlaque() {
 	copyPlaque(cellCurr, cellPrev, 16*16);
 	
-	printf("before diffusion \n");
+	//printf("before diffusion \n");
 
-	display(cellPrev, 16);
-	display(cellCurr, 16);
+	//display(cellPrev, 16);
+	//display(cellCurr, 16);
 
 	diffusionHorizontale();
+	copyPlaque(cellCurr, cellPrev, 16*16);
 	diffusionVerticale();
 
-	printf("after diffusion \n");
+	//printf("after diffusion \n");
 
-	display(cellPrev, 16);
-	display(cellCurr, 16);
+	//display(cellPrev, 16);
+	//display(cellCurr, 16);
 }
 
 /**
  * Verifier si une cellule est dans la zone interne.
  */
 bool isZoneInterne(int i, int s) {
-	int nbLigne = 1 << ((s+4));
+	nbLigne = 1 << ((s+4));
 
 	// Calcul de la zone interne, dans laquelle la temperature est constante
 	int highBound = 1 << (s+3);
@@ -99,8 +125,9 @@ bool isZoneInterne(int i, int s) {
  * La taille de plaque est defini par une valeur s donne en argument de program.
  * La plaque aura 2**(s+4) cases sur une ligne, et 2**(s+4) colonne. 
  */ 
-void plaqueInit(int s) {
+void plaqueInit(int argS) {
 
+	s = argS;
 	int nbLigne = 1 << ((s+4));
 	int nbCell = nbLigne*nbLigne;	
 	
@@ -119,11 +146,24 @@ void plaqueInit(int s) {
 			cellCurr[i] = TEMP_FROID;
 	}
 	
+	printf("========= BEFORE ITERATION ===========\n");
 	printf("cellCurr \n");
 	display(cellCurr, nbLigne);
 	printf("cellPrev \n");
 	display(cellPrev, nbLigne);
-	updatePlaque();
+
+	for(i=0;i<1000;i++){
+		updatePlaque();
+	}
+
+	printf("========= AFTER ITERATION ===========\n");
+	printf("cellCurr \n");
+	display(cellCurr, nbLigne);
+	printf("cellPrev \n");
+	display(cellPrev, nbLigne);
+
+	//updatePlaque();
+	//updatePlaque();
 }
 
 void printIntro(){
