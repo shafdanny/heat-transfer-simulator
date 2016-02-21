@@ -25,16 +25,18 @@ void copyPlaque(float *plOrigin, float *plDest, int nbCell) {
 }
 
 /**
- * Afficher les cellules. Utilisation pour debogage, 
- * seulement pour des petits tailles.
+ * Afficher les cellules. Seulement le quart superieur gauche du tableau
+ * doit etre affiche, et pour les indices modulo 2**s
  */
 void display(float *cell, int nbLigne) {
 	int i,j;
 	
-	for(i=0; i<nbLigne*nbLigne; i++){
+	for(i=0; i<nbLigne*nbLigne/2; i++){
 		if(i%nbLigne == 0)
 			printf("\n");
-		printf("|%5.1f| ", cell[i]);
+		if(i%(1<<s) == 0 && i%nbLigne < nbLigne/2 && i/nbLigne < nbLigne/2) {
+			printf("|%5.1f| ", cell[i]);
+		}
 	}
 	printf("\n");
 }
@@ -146,21 +148,15 @@ void plaqueInit(int argS) {
 			cellCurr[i] = TEMP_FROID;
 	}
 	
-	printf("========= BEFORE ITERATION ===========\n");
-	printf("cellCurr \n");
+	printf("\n========= BEFORE ITERATION ===========\n");
 	display(cellCurr, nbLigne);
-	printf("cellPrev \n");
-	display(cellPrev, nbLigne);
 
 	for(i=0;i<1000;i++){
 		updatePlaque();
 	}
 
-	printf("========= AFTER ITERATION ===========\n");
-	printf("cellCurr \n");
+	printf("\n========= AFTER ITERATION ===========\n");
 	display(cellCurr, nbLigne);
-	printf("cellPrev \n");
-	display(cellPrev, nbLigne);
 
 	//updatePlaque();
 	//updatePlaque();
