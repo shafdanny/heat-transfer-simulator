@@ -3,35 +3,54 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <unistd.h>
+#include <string.h>
+#include "plaque.c"
 
 
 int main(int argc, char **argv){
-	
+
+  // define all flags
   int mflag = 0;
   int Mflag = 0;
-  int tvalue = 0;
-  int svalue = 0;
+  int aflag = 0;
+  
+  // define all values from an option argument
+  char* svalue = 0;
+  char* ivalue = 0;
+  char* evalue = 0;
+  char* tvalue = 0;
+  
   int index;
 
   opterr = 0;
   int c;
 
-  while ((c = getopt (argc, argv, "s:mMai:e:t:")) != -1)
+  while ((c = getopt (argc, argv, "mMas:i:e:t:")) != -1)
     switch (c)
       {
-		case 's':
-		  svalue = atoi(optarg);
 		case 'm':
 		  mflag = 1;
 		  break;
 		case 'M':
 		  Mflag = 1;
 		  break;
+		case 'a':
+		  aflag = 1;
+		  break;
+		case 's':
+		  svalue = optarg;
+		  break;
+		case 'i':
+		  ivalue = optarg;
+		  break;
+		case 'e':
+		  evalue = optarg;
+		  break;
 		case 't':
-		  tvalue = atoi(optarg);
+		  tvalue = optarg;
 		  break;
 		case '?':
-		  if (optopt == 'c')
+		  if (strchr("siet", optopt) != NULL)
 			fprintf (stderr, "Option -%c requires an argument.\n", optopt);
 		  else if (isprint (optopt))
 			fprintf (stderr, "Unknown option `-%c'.\n", optopt);
@@ -42,13 +61,16 @@ int main(int argc, char **argv){
 			return 1;
 		  default:
 			abort ();
-      }
+    }
 
-  printf ("svalue = %d, tvalue = %d, mflag = %d\n",
-          svalue, tvalue, mflag);
+	printf ("svalue = %s, tvalue = %s, ivalue = %s, evalue = %s, mflag = %d\n",
+			  svalue, tvalue, ivalue, evalue, mflag);
 
-  for (index = optind; index < argc; index++)
-    printf ("Non-option argument %s\n", argv[index]);
-  return 0;
+	for (index = optind; index < argc; index++)
+		printf ("Non-option argument %s\n", argv[index]);
+	
+	printIntro();
+	plaqueInit(atoi(svalue));
+	return 0;
 
 }

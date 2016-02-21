@@ -25,4 +25,4 @@ main: $(OBJ)
 
 
 clean: all
-	-rm -f *.o a.out
+	-rm -f $(OBJDIR)/*.o a.out
