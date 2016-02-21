@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TEMP_CHAUD 50
+#define TEMP_CHAUD 255
+#define TEMP_FROID 0
 
 float cell[16][16];
 float *cellule = NULL;
@@ -17,7 +18,7 @@ void plaqueInit(int s) {
 	
 	printf("Will create %d row and line, so %d cell \n", nbLigne, nbCell);
 	cellule = (float*)malloc(nbCell*sizeof(float));
-	printf("%p \n", cellule);
+	//printf("%p \n", cellule);
 	
 	int i=0;
 	int j=0;
@@ -38,8 +39,8 @@ void plaqueInit(int s) {
 			cellule[i] = TEMP_CHAUD;
 	}
 	
-	printf("2**n-1 : %d \n", 1 << (s+3));
-	printf("2**n-4 : %d \n", 1 << (s));
+	//printf("2**n-1 : %d \n", 1 << (s+3));
+	//printf("2**n-4 : %d \n", 1 << (s));
 	
 	display(nbLigne);
 }
