@@ -16,6 +16,7 @@ float *cellCurr = NULL;
 
 int s = 0;
 int nbLigne = 0;
+int nbCell = 0;
 
 void copyPlaque(float *plOrigin, float *plDest, int nbCell) {
 	int i;
@@ -32,9 +33,10 @@ void display(float *cell, int nbLigne) {
 	int i;
 	
 	for(i=0; i<nbLigne*nbLigne/2; i++){
-		if(i%nbLigne == 0)
-			printf("\n");
-		if(i%(1<<s) == 0 && i%nbLigne < nbLigne/2 && i/nbLigne < nbLigne/2) {
+		
+		if(i%(1<<s) == 0 && (i/nbLigne)%(1<<s) == 0 && i%nbLigne < nbLigne/2 && i/nbLigne < nbLigne/2) {
+			if(i%nbLigne == 0)
+				printf("\n");
 			printf("|%5.1f| ", cell[i]);
 		}
 	}
@@ -44,12 +46,12 @@ void display(float *cell, int nbLigne) {
 void diffusionHorizontale() {
 	int i;
 
-	for(i=0; i<16*16; i++) {
+	for(i=0; i<nbCell; i++) {
 		//printf("Checking cell %d \n", i);
 		float prevLeftCell = 0.0;
 		float prevRightCell = 0.0;
 
-		if(!isZoneInterne(i,0)) {
+		if(!isZoneInterne(i,s)) {
 			prevLeftCell = (i%nbLigne == 0) ? TEMP_FROID : cellPrev[i-1];
 			prevRightCell = (i%nbLigne == nbLigne-1) ? TEMP_FROID : cellPrev[i+1];
 
@@ -72,13 +74,13 @@ void diffusionHorizontale() {
 void diffusionVerticale() {
 	int i;
 
-	for(i=0; i<16*16; i++) {
+	for(i=0; i<nbCell; i++) {
 
 		float prevTopCell = 0.0;
 		float prevBottomCell = 0.0;
 
 		//printf("Checking cell %d \n", i);
-		if(!isZoneInterne(i,0)) {
+		if(!isZoneInterne(i,s)) {
 			prevTopCell = (i/nbLigne == 0) ? TEMP_FROID : cellPrev[i-nbLigne];
 			prevBottomCell = (i/nbLigne == nbLigne-1) ? TEMP_FROID : cellPrev[i+nbLigne];
 
@@ -88,7 +90,7 @@ void diffusionVerticale() {
 }
 
 void updatePlaque() {
-	copyPlaque(cellCurr, cellPrev, 16*16);
+	copyPlaque(cellCurr, cellPrev, nbCell);
 	
 	//printf("before diffusion \n");
 
@@ -96,7 +98,7 @@ void updatePlaque() {
 	//display(cellCurr, 16);
 
 	diffusionHorizontale();
-	copyPlaque(cellCurr, cellPrev, 16*16);
+	copyPlaque(cellCurr, cellPrev, nbCell);
 	diffusionVerticale();
 
 	//printf("after diffusion \n");
@@ -130,8 +132,8 @@ bool isZoneInterne(int i, int s) {
 void plaqueInit(int argS) {
 
 	s = argS;
-	int nbLigne = 1 << ((s+4));
-	int nbCell = nbLigne*nbLigne;	
+ 	nbLigne = 1 << ((s+4));
+	nbCell = nbLigne*nbLigne;	
 	
 	printf("Will create %d row and line, so %d cell \n", nbLigne, nbCell);
 	cellCurr = (float*)malloc(nbCell*sizeof(float));
@@ -150,7 +152,7 @@ void plaqueInit(int argS) {
 	printf("\n========= BEFORE ITERATION ===========\n");
 	display(cellCurr, nbLigne);
 
-	for(i=0;i<1000;i++){
+	for(i=0;i<10000;i++){
 		updatePlaque();
 	}
 

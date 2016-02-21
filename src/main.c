@@ -6,8 +6,11 @@
 #include <string.h>
 #include "plaque.c"
 
+#define toDigit(c) (c-'0')
+
 
 int main(int argc, char **argv){
+  int i=0;
 
   // define all flags
   int mflag = 0;
@@ -19,9 +22,7 @@ int main(int argc, char **argv){
   char* ivalue = 0;
   char* evalue = 0;
   char* tvalue = 0;
-  
-  int index;
-
+ 
   opterr = 0;
   int c;
 
@@ -63,13 +64,21 @@ int main(int argc, char **argv){
 			abort ();
     }
 
+    /*
+    // Affiche les valeurs des options
 	printf ("svalue = %s, tvalue = %s, ivalue = %s, evalue = %s, mflag = %d\n",
 			  svalue, tvalue, ivalue, evalue, mflag);
 
 	for (index = optind; index < argc; index++)
 		printf ("Non-option argument %s\n", argv[index]);
+	*/
+	//char *token = strtok(evalue, "");
 	
-	plaqueInit(atoi(svalue));
+	for(i=0;i<strlen(svalue);i++) {
+		printf("\n ########## SCENARIO 0 avec -s %c ##########\n", svalue[i]);
+		plaqueInit(toDigit(svalue[i]));
+	}
+	//plaqueInit(atoi(svalue));
 	return 0;
 
 }
