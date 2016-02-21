@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 #include <sys/resource.h>
 #include "plaque.h"
 
@@ -153,21 +154,32 @@ void plaqueInit(int argS, int nbIter, int aflag) {
 		display(cellCurr, nbLigne);
 	}
 
-	int who = RUSAGE_SELF;
-	struct rusage usage;
-	int ret;
-
-	ret = getrusage(who, &usage);
-	printf("Temps de reponse utilisateur: %d us \n", usage.ru_utime.tv_usec);
-	printf("Temps CPU consumme: %d us \n", usage.ru_stime.tv_usec);
-	printf("Empreinte memoire max: %ld kb \n", usage.ru_maxrss);
-
 }
 
 void executeScenario(int numScenario, int nbRepetition) {
 	int i,j;
-	for(i=0;i<nbIteration;i++){
-		updatePlaque();
+	for(j=0;j<nbRepetition;j++){
+		clock_t start_t, end_t, total_t;
+		
+		start_t = clock();
+		
+		for(i=0;i<nbIteration;i++){
+			updatePlaque();
+		}
+		
+		end_t = clock();
+		total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+		printf("Total time taken by CPU: %f\n", total_t  );
+		   
+		int who = RUSAGE_SELF;
+		struct rusage usage;
+		int ret;
+
+		ret = getrusage(who, &usage);
+		printf("Rep %d \n", j);
+		printf("Temps de reponse utilisateur: %d us \n", usage.ru_utime.tv_usec);
+		printf("Temps CPU consumme: %d us \n", usage.ru_stime.tv_usec);
+		printf("Empreinte memoire max: %ld kb \n", usage.ru_maxrss);
 	}
 }
 
