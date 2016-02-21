@@ -29,7 +29,7 @@ void copyPlaque(float *plOrigin, float *plDest, int nbCell) {
  * doit etre affiche, et pour les indices modulo 2**s
  */
 void display(float *cell, int nbLigne) {
-	int i,j;
+	int i;
 	
 	for(i=0; i<nbLigne*nbLigne/2; i++){
 		if(i%nbLigne == 0)
@@ -139,7 +139,6 @@ void plaqueInit(int argS) {
 
 
 	int i=0;
-	int j=0;
 	
 	for(i=0; i<nbCell; i++){
 		if(isZoneInterne(i,s))
