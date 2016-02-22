@@ -76,7 +76,7 @@ int main(int argc, char **argv){
 	
 	for(i=0;i<strlen(svalue);i++) {
 		printf("\n ########## SCENARIO 0 avec -s %c ##########\n", svalue[i]);
-		plaqueInit(toDigit(svalue[i]), atoi(ivalue), aflag);
+		plaqueInit(toDigit(svalue[i]), atoi(ivalue), aflag, mflag, Mflag);
 	}
 	//plaqueInit(atoi(svalue));
 	return 0;

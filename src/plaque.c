@@ -1,3 +1,8 @@
+/**
+ * Representation de plaque.
+ * 
+ * author : Shafiq Daniel & Nicolas Meurgues
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,7 +16,6 @@
 
 #define H 6
 
-
 float *cellPrev = NULL;
 float *cellCurr = NULL;
 
@@ -19,6 +23,8 @@ int s = 0;
 int nbLigne = 0;
 int nbCell = 0;
 int nbIteration = 0;
+int mFlag;
+int MFlag;
 
 void copyPlaque(float *plOrigin, float *plDest, int nbCell) {
 	int i;
@@ -82,20 +88,10 @@ void diffusionVerticale() {
 
 void updatePlaque() {
 	copyPlaque(cellCurr, cellPrev, nbCell);
-	
-	//printf("before diffusion \n");
-
-	//display(cellPrev, 16);
-	//display(cellCurr, 16);
 
 	diffusionHorizontale();
 	copyPlaque(cellCurr, cellPrev, nbCell);
 	diffusionVerticale();
-
-	//printf("after diffusion \n");
-
-	//display(cellPrev, 16);
-	//display(cellCurr, 16);
 }
 
 /**
@@ -120,12 +116,14 @@ bool isZoneInterne(int i, int s) {
  * La taille de plaque est defini par une valeur s donne en argument de program.
  * La plaque aura 2**(s+4) cases sur une ligne, et 2**(s+4) colonne. 
  */ 
-void plaqueInit(int argS, int nbIter, int aflag) {
+void plaqueInit(int argS, int nbIter, int aflag, int mflag, int Mflag) {
 
 	s = argS;
  	nbLigne = 1 << ((s+4));
 	nbCell = nbLigne*nbLigne;	
 	nbIteration = nbIter;
+	mFlag = mflag;
+	MFlag = Mflag;
 
 	printf("Plaque taille %d*%d \n", nbLigne, nbLigne);
 	cellCurr = (float*)malloc(nbCell*sizeof(float));
@@ -156,30 +154,73 @@ void plaqueInit(int argS, int nbIter, int aflag) {
 
 }
 
-void executeScenario(int numScenario, int nbRepetition) {
-	int i,j;
-	for(j=0;j<nbRepetition;j++){
-		clock_t start_t, end_t, total_t;
-		
-		start_t = clock();
-		
-		for(i=0;i<nbIteration;i++){
-			updatePlaque();
-		}
-		
-		end_t = clock();
-		total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
-		printf("Total time taken by CPU: %f\n", total_t  );
-		   
-		int who = RUSAGE_SELF;
-		struct rusage usage;
-		int ret;
-
-		ret = getrusage(who, &usage);
-		printf("Rep %d \n", j);
-		printf("Temps de reponse utilisateur: %d us \n", usage.ru_utime.tv_usec);
-		printf("Temps CPU consumme: %d us \n", usage.ru_stime.tv_usec);
-		printf("Empreinte memoire max: %ld kb \n", usage.ru_maxrss);
+void executeIteration() {
+	int i;
+	
+	for(i=0;i<nbIteration;i++){
+		updatePlaque();
 	}
+}
+
+double calculMoyenne(double array[], int size) {
+	double total = 0;
+	double max = array[0];
+	double min = array[0];
+	double moyenne = 0;
+	
+	for(int i=0;i<size;i++) {
+		if(array[i] > max)
+			max = array[i];
+		if (array[i] < min)
+			min = array[i];
+		total += array[i];
+	}
+	
+	total = total - max - min;
+	moyenne = total/(size-2);
+	
+	return moyenne;
+}
+
+void executeScenario(int numScenario, int nbRepetition) {
+	int i;
+	
+	// Stocker les temps d'execution CPU et d'utilisateur
+	// pour ensuite faire le calcul de moyenne
+	double cpuTime[nbRepetition];
+	double userTime[nbRepetition];
+	double moyenCpuTime, moyenUserTime;
+	
+	clock_t start, end;
+	time_t begin, fin;
+	double diffCpu;
+	double diffUser;
+	struct rusage usage;
+	
+	for(i=0;i<nbRepetition;i++){
+		time(&begin);
+		start = clock();
+		executeIteration();
+		end = clock();
+		time(&fin);	
+		diffCpu = ((double) (end - start)) / CLOCKS_PER_SEC;	
+		diffUser = difftime(fin,begin);
+		printf("Rep %d : Time CPU - %f  : Time user - %f \n", i, diffCpu, diffUser);
+		cpuTime[i] = diffCpu;
+		userTime[i] = diffUser;
+	}
+	getrusage(RUSAGE_SELF, &usage);
+	
+	moyenCpuTime = calculMoyenne(cpuTime, nbRepetition);
+	moyenUserTime = calculMoyenne(userTime, nbRepetition);
+
+	if(mFlag)
+		printf("Moyenne cpuTime : %f \n", moyenCpuTime);
+	if(MFlag)
+		printf("Moyenne userTime : %f \n", moyenUserTime);
+	
+	printf("Empreinte max : %ld \n", usage.ru_maxrss);
+
+
 }
 
