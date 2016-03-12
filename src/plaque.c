@@ -10,6 +10,7 @@
 #include <time.h>
 #include <sys/resource.h>
 #include "plaque.h"
+#include "barriere.h"
 
 #define TEMP_CHAUD 255
 #define TEMP_FROID 0
@@ -146,8 +147,8 @@ void plaqueInit(int scenario, int argS, int nbIter, int aflag, int mflag, int Mf
 	}
 
 	// Pour l'instant, c'est que scenario 0 10 fois
-	printf("\n ########## SCENARIO 0 avec -s %d ##########\n", argS);
-	executeScenario(0, 10);
+	printf("\n ########## SCENARIO %d avec -s %d ##########\n", scenario, argS);
+	executeScenario(scenario, 10);
 
 	if(aflag) {
 		printf("\n========= AFTER %d ITERATION ===========\n", nbIter);
@@ -202,7 +203,10 @@ void executeScenario(int numScenario, int nbRepetition) {
 	for(i=0;i<nbRepetition;i++){
 		time(&begin);
 		start = clock();
-		executeIteration();
+		if(numScenario == 0)
+			executeIteration();
+		else if(numScenario == 1)
+			testBarriere(cellPrev, cellCurr);
 		end = clock();
 		time(&fin);	
 		diffCpu = ((double) (end - start)) / CLOCKS_PER_SEC;	

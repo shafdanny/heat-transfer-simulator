@@ -87,8 +87,9 @@ int main(int argc, char **argv){
 		}
 	}*/
 	
-	testBarriere();
-	
+	//testBarriere();
+	plaqueInit(0, 0, atoi(ivalue), aflag, mflag, Mflag);
+	plaqueInit(1, 0, atoi(ivalue), aflag, mflag, Mflag);
 	
 	//plaqueInit(atoi(svalue));
 	return 0;
