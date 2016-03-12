@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c99 -g -Wall
+CFLAGS = -std=gnu99 -g -Wall -pthread
 
 MKDIR_P = @mkdir -p
 

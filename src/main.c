@@ -76,7 +76,7 @@ int main(int argc, char **argv){
 	*/
 	//char *token = strtok(evalue, "");
 	
-	
+	/*
 	for(i=0;i<strlen(evalue);i++) {
 		printf("\n########### Running SCENARIO %c ###########\n", evalue[i]);
 		int scenario = toDigit(evalue[i]);
@@ -85,7 +85,7 @@ int main(int argc, char **argv){
 			int tailleS = toDigit(svalue[j]);
 			plaqueInit(scenario, tailleS, atoi(ivalue), aflag, mflag, Mflag);
 		}
-	}
+	}*/
 	
 	testBarriere();
 	

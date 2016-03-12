@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 
-
 void testBarriere();
 
 #endif
