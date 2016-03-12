@@ -87,10 +87,11 @@ void diffusionVerticale() {
 }
 
 void updatePlaque() {
-	copyPlaque(cellCurr, cellPrev, nbCell);
-
+	//copyPlaque(cellCurr, cellPrev, nbCell);
+	cellPrev = cellCurr;
 	diffusionHorizontale();
-	copyPlaque(cellCurr, cellPrev, nbCell);
+	//copyPlaque(cellCurr, cellPrev, nbCell);
+	cellPrev = cellCurr;
 	diffusionVerticale();
 }
 
@@ -116,7 +117,7 @@ bool isZoneInterne(int i, int s) {
  * La taille de plaque est defini par une valeur s donne en argument de program.
  * La plaque aura 2**(s+4) cases sur une ligne, et 2**(s+4) colonne. 
  */ 
-void plaqueInit(int argS, int nbIter, int aflag, int mflag, int Mflag) {
+void plaqueInit(int scenario, int argS, int nbIter, int aflag, int mflag, int Mflag) {
 
 	s = argS;
  	nbLigne = 1 << ((s+4));
@@ -125,7 +126,7 @@ void plaqueInit(int argS, int nbIter, int aflag, int mflag, int Mflag) {
 	mFlag = mflag;
 	MFlag = Mflag;
 
-	printf("Plaque taille %d*%d \n", nbLigne, nbLigne);
+	//printf("\n Plaque taille %d*%d \n", nbLigne, nbLigne);
 	cellCurr = (float*)malloc(nbCell*sizeof(float));
 	cellPrev = (float*)malloc(nbCell*sizeof(float));
 
@@ -145,6 +146,7 @@ void plaqueInit(int argS, int nbIter, int aflag, int mflag, int Mflag) {
 	}
 
 	// Pour l'instant, c'est que scenario 0 10 fois
+	printf("\n ########## SCENARIO 0 avec -s %d ##########\n", argS);
 	executeScenario(0, 10);
 
 	if(aflag) {
@@ -205,10 +207,11 @@ void executeScenario(int numScenario, int nbRepetition) {
 		time(&fin);	
 		diffCpu = ((double) (end - start)) / CLOCKS_PER_SEC;	
 		diffUser = difftime(fin,begin);
-		printf("Rep %d : Time CPU - %f  : Time user - %f \n", i, diffCpu, diffUser);
+		//printf("Rep %d : Time CPU - %f  : Time user - %f \n", i, diffCpu, diffUser);
 		cpuTime[i] = diffCpu;
 		userTime[i] = diffUser;
 	}
+	
 	getrusage(RUSAGE_SELF, &usage);
 	
 	moyenCpuTime = calculMoyenne(cpuTime, nbRepetition);

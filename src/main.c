@@ -5,12 +5,14 @@
 #include <unistd.h>
 #include <string.h>
 #include "plaque.h"
+#include "barriere.h"
 
 #define toDigit(c) (c-'0')
 
 
 int main(int argc, char **argv){
   int i=0;
+  int j=0;
 
   // define all flags
   int mflag = 0;
@@ -74,10 +76,20 @@ int main(int argc, char **argv){
 	*/
 	//char *token = strtok(evalue, "");
 	
-	for(i=0;i<strlen(svalue);i++) {
-		printf("\n ########## SCENARIO 0 avec -s %c ##########\n", svalue[i]);
-		plaqueInit(toDigit(svalue[i]), atoi(ivalue), aflag, mflag, Mflag);
+	
+	for(i=0;i<strlen(evalue);i++) {
+		printf("\n########### Running SCENARIO %c ###########\n", evalue[i]);
+		int scenario = toDigit(evalue[i]);
+		
+		for(j=0;j<strlen(svalue);j++) {
+			int tailleS = toDigit(svalue[j]);
+			plaqueInit(scenario, tailleS, atoi(ivalue), aflag, mflag, Mflag);
+		}
 	}
+	
+	testBarriere();
+	
+	
 	//plaqueInit(atoi(svalue));
 	return 0;
 
