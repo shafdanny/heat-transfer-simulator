@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-void testBarriere(float *oldCell, float *newCell);
+void testBarriere(float *oldCell, float *newCell, int nbLine, int nbCellule, int argS);
 
 #endif
 

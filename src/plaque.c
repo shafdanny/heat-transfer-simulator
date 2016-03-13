@@ -20,9 +20,9 @@
 float *cellPrev = NULL;
 float *cellCurr = NULL;
 
-int s = 0;
-int nbLigne = 0;
-int nbCell = 0;
+static int s = 0;
+static int nbLigne = 0;
+static int nbCell = 0;
 int nbIteration = 0;
 int mFlag;
 int MFlag;
@@ -87,12 +87,28 @@ void diffusionVerticale() {
 	}
 }
 
+void swapCell(float **oldCell, float **newCell){
+  float *temp = *oldCell;
+  *oldCell = *newCell;
+  *newCell = temp;
+}
+
 void updatePlaque() {
-	//copyPlaque(cellCurr, cellPrev, nbCell);
-	cellPrev = cellCurr;
+	copyPlaque(cellCurr, cellPrev, nbCell);
+	//cellPrev = cellCurr;
+	//printf("%p %p \n", cellPrev, cellCurr);
+	//swapCell(&cellPrev, &cellCurr);
+	
 	diffusionHorizontale();
-	//copyPlaque(cellCurr, cellPrev, nbCell);
-	cellPrev = cellCurr;
+
+	//printf("%p %p\n", cellPrev, cellCurr);
+	//swapCell(&cellPrev, &cellCurr);
+	
+	//printf("%p %p\n", cellPrev, cellCurr);
+	
+	copyPlaque(cellCurr, cellPrev, nbCell);
+	//cellPrev = cellCurr;
+	
 	diffusionVerticale();
 }
 
@@ -114,24 +130,14 @@ bool isZoneInterne(int i, int s) {
 
 }
 
-/**
- * La taille de plaque est defini par une valeur s donne en argument de program.
- * La plaque aura 2**(s+4) cases sur une ligne, et 2**(s+4) colonne. 
- */ 
-void plaqueInit(int scenario, int argS, int nbIter, int aflag, int mflag, int Mflag) {
-
-	s = argS;
- 	nbLigne = 1 << ((s+4));
-	nbCell = nbLigne*nbLigne;	
-	nbIteration = nbIter;
-	mFlag = mflag;
-	MFlag = Mflag;
-
-	//printf("\n Plaque taille %d*%d \n", nbLigne, nbLigne);
+void initializeCellule(int nbCell, int s) {
 	cellCurr = (float*)malloc(nbCell*sizeof(float));
 	cellPrev = (float*)malloc(nbCell*sizeof(float));
-
-
+	
+	if(cellCurr == NULL || cellPrev == NULL) {
+		printf("Error in init malloc");
+	}
+	
 	int i=0;
 	
 	for(i=0; i<nbCell; i++){
@@ -140,9 +146,28 @@ void plaqueInit(int scenario, int argS, int nbIter, int aflag, int mflag, int Mf
 		else
 			cellCurr[i] = TEMP_FROID;
 	}
+}
+
+/**
+ * La taille de plaque est defini par une valeur s donne en argument de program.
+ * La plaque aura 2**(s+4) cases sur une ligne, et 2**(s+4) colonne. 
+ */ 
+void plaqueInit(int scenario, int argS, int nbIter, int aflag, int mflag, int Mflag) {
+	printf("plaque init\n");
+	s = argS;
+ 	nbLigne = 1 << ((s+4));
+	nbCell = nbLigne*nbLigne;	
+	nbIteration = nbIter;
+	mFlag = mflag;
+	MFlag = Mflag;
+	
+	initializeCellule(nbCell, s);
+	copyPlaque(cellCurr, cellPrev, nbCell);
+
+	//printf("\n Plaque taille %d*%d \n", nbLigne, nbLigne);
 	
 	if(aflag) {
-		printf("\n========= BEFORE ITERATION ===========\n");
+		printf("\n========= BEFORE ITERATION =========== %d %p \n", nbLigne, cellCurr);
 		display(cellCurr, nbLigne);
 	}
 
@@ -151,7 +176,7 @@ void plaqueInit(int scenario, int argS, int nbIter, int aflag, int mflag, int Mf
 	executeScenario(scenario, 10);
 
 	if(aflag) {
-		printf("\n========= AFTER %d ITERATION ===========\n", nbIter);
+		printf("\n========= AFTER %d ITERATION =========== %d %p \n", nbIter, nbLigne, cellCurr);
 		display(cellCurr, nbLigne);
 	}
 
@@ -201,12 +226,14 @@ void executeScenario(int numScenario, int nbRepetition) {
 	struct rusage usage;
 	
 	for(i=0;i<nbRepetition;i++){
+		initializeCellule(nbCell, s);
+
 		time(&begin);
 		start = clock();
 		if(numScenario == 0)
 			executeIteration();
 		else if(numScenario == 1)
-			testBarriere(cellPrev, cellCurr);
+			testBarriere(cellPrev, cellCurr, nbLigne, nbCell, s);
 		end = clock();
 		time(&fin);	
 		diffCpu = ((double) (end - start)) / CLOCKS_PER_SEC;	
