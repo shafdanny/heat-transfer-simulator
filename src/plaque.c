@@ -152,8 +152,8 @@ void initializeCellule(int nbCell, int s) {
  * La taille de plaque est defini par une valeur s donne en argument de program.
  * La plaque aura 2**(s+4) cases sur une ligne, et 2**(s+4) colonne. 
  */ 
-void plaqueInit(int scenario, int argS, int nbIter, int aflag, int mflag, int Mflag) {
-	printf("plaque init\n");
+void plaqueInit(int scenario, int argS, int nbIter, int aflag, int mflag, int Mflag, int nbThread) {
+	//printf("plaque init\n");
 	s = argS;
  	nbLigne = 1 << ((s+4));
 	nbCell = nbLigne*nbLigne;	
@@ -162,21 +162,19 @@ void plaqueInit(int scenario, int argS, int nbIter, int aflag, int mflag, int Mf
 	MFlag = Mflag;
 	
 	initializeCellule(nbCell, s);
-	copyPlaque(cellCurr, cellPrev, nbCell);
-
-	//printf("\n Plaque taille %d*%d \n", nbLigne, nbLigne);
+	//copyPlaque(cellCurr, cellPrev, nbCell);
+	swapCell(cellCurr, cellPrev);
 	
 	if(aflag) {
-		printf("\n========= BEFORE ITERATION =========== %d %p \n", nbLigne, cellCurr);
+		printf("\n========= BEFORE ITERATION [%dx%d] =========== \n", nbLigne, nbLigne);
 		display(cellCurr, nbLigne);
 	}
 
-	// Pour l'instant, c'est que scenario 0 10 fois
 	printf("\n ########## SCENARIO %d avec -s %d ##########\n", scenario, argS);
 	executeScenario(scenario, 10);
 
 	if(aflag) {
-		printf("\n========= AFTER %d ITERATION =========== %d %p \n", nbIter, nbLigne, cellCurr);
+		printf("\n========= AFTER %d ITERATION [%dx%d] =========== \n", nbIter, nbLigne, nbLigne);
 		display(cellCurr, nbLigne);
 	}
 
