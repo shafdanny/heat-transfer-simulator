@@ -102,12 +102,6 @@ void *updatePlaqueThread(void *arg) {
 			//printf("Looks like all thread is finished \n");
 		}
 		else if(bar==PTHREAD_BARRIER_SERIAL_THREAD) {
-			//printf("Looks like all thread is finished \n");
-				////float *temp = prevCell;
-				//prevCell = currCell;
-				////currCell = temp;
-			//copyPlaque(currCell, prevCell, nbLigne*nbLigne);
-			//swapCell(&currCell, &prevCell);
 
 		}
 		
@@ -126,13 +120,7 @@ void *updatePlaqueThread(void *arg) {
 				//printf("Looks like all thread is finished \n");
 			}
 			else if(bar==PTHREAD_BARRIER_SERIAL_THREAD) {
-				//printf("Looks like all thread is finished \n");
-				//float *temp = prevCell;
-				//prevCell = currCell;
-				//currCell = temp;
-				//copyPlaque(currCell, prevCell, nbLigne*nbLigne);
-				//swapCell(&currCell, &prevCell);
-				//display(currCell, nbLigne);
+	
 			}
 	}
 }
@@ -147,7 +135,11 @@ void executeBarriere(float *oldCell, float *newCell, int nbLine, int nbCellule, 
 	//printf("Testing barrier with %d thread \n", division*division);
 	pthread_t threads[nbThread];
 	pthread_attr_t attr;
-	pthread_barrier_init(&barrier,NULL,nbThread);	
+	
+	
+	if(pthread_barrier_init(&barrier,NULL,nbThread) != 0) {
+		perror("Error init barrier");
+	}
 	
 	int limit = nbLine/division;
 	int i;

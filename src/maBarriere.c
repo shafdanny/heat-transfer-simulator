@@ -32,16 +32,6 @@ void executeMaBarriere(float *oldCell, float *newCell, int nbLine, int nbCellule
 	//pthread_attr_t attr;
 	int retInitBarrier = pthread_barrier_init(&barrier,NULL,nbThread);	
 	
-	if(retInitBarrier == 0) {
-		//printf("Barrier init successful\n"); 
-	} else {
-		perror("Error init barrier");
-	}
-	
-	prevCell = oldCell;				
-	currCell = newCell;
-	nbCell = nbCellule;
-	s = argS;
 	
 	int limit = nbLine/division;
 	int i;
