@@ -3,7 +3,19 @@
 
 #include <stdbool.h>
 
-void testBarriere(float *oldCell, float *newCell, int nbLine, int nbCellule, int argS);
+typedef struct _thread_data_t {
+	int tid;
+	int limit;
+	int leftOffset;
+	int topOffset;
+	
+} thread_data_t;
+
+
+
+void executeBarriere(float *oldCell, float *newCell, int nbLine, int nbCellule, int argS, int nbThread);
+void executeMaBarriere(float *oldCell, float *newCell, int nbLine, int nbCellule, int argS, int argT);
+void *updatePlaqueThread(void *arg);
 
 #endif
 

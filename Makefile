@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=gnu99 -g -Wall -pthread
+CFLAGS = -std=gnu99 -g -Wall -pthread 
 
 MKDIR_P = @mkdir -p
 
@@ -9,11 +9,11 @@ SRCDIR = src
 OBJDIR = bin/obj
 BINDIR = bin
 
-_OBJ = main.o plaque.o barriere.o
+_OBJ = main.o plaque.o barriere.o maBarriere.o
 OBJ = $(patsubst %, $(OBJDIR)/%,$(_OBJ))
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c 
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $< 
 
 all: dir main
 

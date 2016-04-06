@@ -1,0 +1,30 @@
+
+########### Running SCENARIO 1 ###########
+
+ === Option -t 1 === 
+
+ ########## SCENARIO 1 avec -s 0 ##########
+Moyenne cpuTime : 1.078077 
+Moyenne userTime : 0.375000 
+Empreinte max : 660 
+
+ === Option -t 1 === 
+
+ ########## SCENARIO 1 avec -s 1 ##########
+Moyenne cpuTime : 3.191276 
+Moyenne userTime : 1.000000 
+Empreinte max : 660 
+
+ === Option -t 1 === 
+
+ ########## SCENARIO 1 avec -s 2 ##########
+Moyenne cpuTime : 11.230598 
+Moyenne userTime : 3.000000 
+Empreinte max : 1048 
+
+ === Option -t 1 === 
+
+ ########## SCENARIO 1 avec -s 3 ##########
+Moyenne cpuTime : 43.579849 
+Moyenne userTime : 11.750000 
+Empreinte max : 2440 

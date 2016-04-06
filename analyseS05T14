@@ -1,0 +1,170 @@
+
+########### Running SCENARIO 1 ###########
+
+ === Option -t 1 === 
+
+ ########## SCENARIO 1 avec -s 0 ##########
+Moyenne cpuTime : 1.047571 
+Moyenne userTime : 0.250000 
+Empreinte max : 660 
+
+ === Option -t 2 === 
+
+ ########## SCENARIO 1 avec -s 0 ##########
+Moyenne cpuTime : 4.332351 
+Moyenne userTime : 2.500000 
+Empreinte max : 852 
+
+ === Option -t 3 === 
+
+ ########## SCENARIO 1 avec -s 0 ##########
+Moyenne cpuTime : 18.135281 
+Moyenne userTime : 10.875000 
+Empreinte max : 1272 
+
+ === Option -t 4 === 
+
+ ########## SCENARIO 1 avec -s 0 ##########
+Moyenne cpuTime : 74.328054 
+Moyenne userTime : 44.250000 
+Empreinte max : 2896 
+
+ === Option -t 1 === 
+
+ ########## SCENARIO 1 avec -s 1 ##########
+Moyenne cpuTime : 3.114902 
+Moyenne userTime : 1.000000 
+Empreinte max : 2896 
+
+ === Option -t 2 === 
+
+ ########## SCENARIO 1 avec -s 1 ##########
+Moyenne cpuTime : 6.526813 
+Moyenne userTime : 3.000000 
+Empreinte max : 2896 
+
+ === Option -t 3 === 
+
+ ########## SCENARIO 1 avec -s 1 ##########
+Moyenne cpuTime : 19.772135 
+Moyenne userTime : 11.000000 
+Empreinte max : 2896 
+
+ === Option -t 4 === 
+
+ ########## SCENARIO 1 avec -s 1 ##########
+Moyenne cpuTime : 77.122717 
+Moyenne userTime : 45.375000 
+Empreinte max : 3248 
+
+ === Option -t 1 === 
+
+ ########## SCENARIO 1 avec -s 2 ##########
+Moyenne cpuTime : 11.274508 
+Moyenne userTime : 3.000000 
+Empreinte max : 3248 
+
+ === Option -t 2 === 
+
+ ########## SCENARIO 1 avec -s 2 ##########
+Moyenne cpuTime : 13.399569 
+Moyenne userTime : 5.500000 
+Empreinte max : 3248 
+
+ === Option -t 3 === 
+
+ ########## SCENARIO 1 avec -s 2 ##########
+Moyenne cpuTime : 21.670576 
+Moyenne userTime : 11.125000 
+Empreinte max : 3248 
+
+ === Option -t 4 === 
+
+ ########## SCENARIO 1 avec -s 2 ##########
+Moyenne cpuTime : 80.922984 
+Moyenne userTime : 45.125000 
+Empreinte max : 4264 
+
+ === Option -t 1 === 
+
+ ########## SCENARIO 1 avec -s 3 ##########
+Moyenne cpuTime : 43.715366 
+Moyenne userTime : 11.500000 
+Empreinte max : 4264 
+
+ === Option -t 2 === 
+
+ ########## SCENARIO 1 avec -s 3 ##########
+Moyenne cpuTime : 42.674257 
+Moyenne userTime : 17.125000 
+Empreinte max : 4264 
+
+ === Option -t 3 === 
+
+ ########## SCENARIO 1 avec -s 3 ##########
+Moyenne cpuTime : 43.179253 
+Moyenne userTime : 20.000000 
+Empreinte max : 4972 
+
+ === Option -t 4 === 
+
+ ########## SCENARIO 1 avec -s 3 ##########
+Moyenne cpuTime : 87.431966 
+Moyenne userTime : 44.375000 
+Empreinte max : 7256 
+
+ === Option -t 1 === 
+
+ ########## SCENARIO 1 avec -s 4 ##########
+Moyenne cpuTime : 174.150450 
+Moyenne userTime : 45.625000 
+Empreinte max : 8148 
+
+ === Option -t 2 === 
+
+ ########## SCENARIO 1 avec -s 4 ##########
+Moyenne cpuTime : 152.374968 
+Moyenne userTime : 57.625000 
+Empreinte max : 11144 
+
+ === Option -t 3 === 
+
+ ########## SCENARIO 1 avec -s 4 ##########
+Moyenne cpuTime : 136.144322 
+Moyenne userTime : 58.750000 
+Empreinte max : 14432 
+
+ === Option -t 4 === 
+
+ ########## SCENARIO 1 avec -s 4 ##########
+Moyenne cpuTime : 190.385043 
+Moyenne userTime : 77.875000 
+Empreinte max : 18872 
+
+ === Option -t 1 === 
+
+ ########## SCENARIO 1 avec -s 5 ##########
+Moyenne cpuTime : 694.829884 
+Moyenne userTime : 180.000000 
+Empreinte max : 28212 
+
+ === Option -t 2 === 
+
+ ########## SCENARIO 1 avec -s 5 ##########
+Moyenne cpuTime : 645.203551 
+Moyenne userTime : 184.125000 
+Empreinte max : 39656 
+
+ === Option -t 3 === 
+
+ ########## SCENARIO 1 avec -s 5 ##########
+Moyenne cpuTime : 564.849451 
+Moyenne userTime : 195.500000 
+Empreinte max : 51392 
+
+ === Option -t 4 === 
+
+ ########## SCENARIO 1 avec -s 5 ##########
+Moyenne cpuTime : 671.738052 
+Moyenne userTime : 214.375000 
+Empreinte max : 64280 

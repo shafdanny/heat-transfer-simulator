@@ -27,13 +27,6 @@ int nbIteration = 0;
 int mFlag;
 int MFlag;
 
-void copyPlaque(float *plOrigin, float *plDest, int nbCell) {
-	int i;
-	for(i=0; i<nbCell; i++){
-		plDest[i] = plOrigin[i];
-	}
-}
-
 /**
  * Afficher les cellules. Seulement le quart superieur gauche du tableau
  * doit etre affiche, et pour les indices modulo 2**s
@@ -94,21 +87,8 @@ void swapCell(float **oldCell, float **newCell){
 }
 
 void updatePlaque() {
-	copyPlaque(cellCurr, cellPrev, nbCell);
-	//cellPrev = cellCurr;
-	//printf("%p %p \n", cellPrev, cellCurr);
-	//swapCell(&cellPrev, &cellCurr);
-	
+	cellPrev = cellCurr;
 	diffusionHorizontale();
-
-	//printf("%p %p\n", cellPrev, cellCurr);
-	//swapCell(&cellPrev, &cellCurr);
-	
-	//printf("%p %p\n", cellPrev, cellCurr);
-	
-	copyPlaque(cellCurr, cellPrev, nbCell);
-	//cellPrev = cellCurr;
-	
 	diffusionVerticale();
 }
 
@@ -141,10 +121,14 @@ void initializeCellule(int nbCell, int s) {
 	int i=0;
 	
 	for(i=0; i<nbCell; i++){
-		if(isZoneInterne(i,s))
+		if(isZoneInterne(i,s)) { 
 			cellCurr[i] = TEMP_CHAUD;
-		else
+			cellPrev[i] = TEMP_CHAUD;
+		}
+		else {
 			cellCurr[i] = TEMP_FROID;
+			cellPrev[i] = TEMP_FROID;			
+		}
 	}
 }
 
@@ -162,8 +146,6 @@ void plaqueInit(int scenario, int argS, int nbIter, int aflag, int mflag, int Mf
 	MFlag = Mflag;
 	
 	initializeCellule(nbCell, s);
-	//copyPlaque(cellCurr, cellPrev, nbCell);
-	swapCell(cellCurr, cellPrev);
 	
 	if(aflag) {
 		printf("\n========= BEFORE ITERATION [%dx%d] =========== \n", nbLigne, nbLigne);
@@ -171,7 +153,7 @@ void plaqueInit(int scenario, int argS, int nbIter, int aflag, int mflag, int Mf
 	}
 
 	printf("\n ########## SCENARIO %d avec -s %d ##########\n", scenario, argS);
-	executeScenario(scenario, 10);
+	executeScenario(scenario, 10, nbThread);
 
 	if(aflag) {
 		printf("\n========= AFTER %d ITERATION [%dx%d] =========== \n", nbIter, nbLigne, nbLigne);
@@ -208,7 +190,7 @@ double calculMoyenne(double array[], int size) {
 	return moyenne;
 }
 
-void executeScenario(int numScenario, int nbRepetition) {
+void executeScenario(int numScenario, int nbRepetition, int nbThread) {
 	int i;
 	
 	// Stocker les temps d'execution CPU et d'utilisateur
@@ -228,10 +210,15 @@ void executeScenario(int numScenario, int nbRepetition) {
 
 		time(&begin);
 		start = clock();
+		
+		/** Execute scenario according to the argument given **/
 		if(numScenario == 0)
 			executeIteration();
 		else if(numScenario == 1)
-			testBarriere(cellPrev, cellCurr, nbLigne, nbCell, s);
+			executeBarriere(cellPrev, cellCurr, nbLigne, nbCell, s, nbThread);
+		else if(numScenario == 2)
+			executeMaBarriere(cellPrev, cellCurr, nbLigne, nbCell, s, nbThread);
+
 		end = clock();
 		time(&fin);	
 		diffCpu = ((double) (end - start)) / CLOCKS_PER_SEC;	

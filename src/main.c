@@ -95,6 +95,7 @@ int main(int argc, char **argv){
 				
 				// Executer la scenario avec les nombres de threads dans le parametre -t
 				for(k=0;k<strlen(tvalue);k++) {
+					printf("\n === Option -t %d === \n", toDigit(tvalue[k]));
 					plaqueInit(scenario, tailleS, atoi(ivalue), aflag, mflag, Mflag, toDigit(tvalue[k]));
 				}
 			}

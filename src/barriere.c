@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <pthread.h>
+#include <math.h>
 #include "barriere.h"
 #include "plaque.h"
 
@@ -19,30 +20,24 @@ float *currCell;
 int H = 2;
 
 int TEMP_FROID = 0;
-static int nbCell = 0;
-static int nbLigne = 0;
-static int s = 0;
+int nbCell = 0;
+int nbLigne = 0;
+int s = 0;
 
-typedef struct _thread_data_t {
-	int tid;
-	int *sharedNumber;
-	int limit;
-	int leftOffset;
-	int topOffset;
-	
-} thread_data_t;
 
-void diffusionHorizontaleT(int numCell) {
+void diffusionHorizontaleT(float* cell1, float* cell2, int numCell) {
 	
 		//printf("Checking cell %d \n", numCell);
 		float prevLeftCell = 0.0;
 		float prevRightCell = 0.0;
 
 		if(!isZoneInterne(numCell,s)) {
-			prevLeftCell = (numCell%nbLigne == 0) ? TEMP_FROID : prevCell[numCell-1];
-			prevRightCell = (numCell%nbLigne == nbLigne-1) ? TEMP_FROID : prevCell[numCell+1];
+			//printf("%d \n", nbLigne);
+			//printf("%d\n" , numCell%nbLigne);
+			prevLeftCell = (numCell%nbLigne == 0) ? TEMP_FROID : cell1[numCell-1];
+			prevRightCell = (numCell%nbLigne == nbLigne-1) ? TEMP_FROID : cell1[numCell+1];
 
-			currCell[numCell] = (prevRightCell + (H-2)*(prevCell[numCell]) + prevLeftCell)/H;
+			cell2[numCell] = (prevRightCell + (H-2)*(cell1[numCell]) + prevLeftCell)/H;
 		}
 	
 }
@@ -76,11 +71,12 @@ void *updatePlaqueThread(void *arg) {
 	int limit = data->limit;
 	int leftOffset = data->leftOffset;
 	int topOffset = data->topOffset;
+	int id = data->tid;
 		
 	int i, iter;
 	
-	//printf("This is thread %d , prev %p, curr %p , \n limit %d, leftOffset %d, topOffset %d \n", data->tid, prevCell, currCell,
-	//			limit, leftOffset, topOffset);
+	//~ printf("This is thread %d , prev %p, curr %p , \n limit %d, leftOffset %d, topOffset %d \n\n", id, prevCell, currCell,
+				//~ limit, leftOffset, topOffset);
 	
 	int nbCellSection = limit*limit;
 	
@@ -93,8 +89,8 @@ void *updatePlaqueThread(void *arg) {
 			//calculer le numero de cellule à traiter
 			int numCell = ((i/limit)*nbLigne + topOffset*nbLigne ) + ((i%limit) +  leftOffset);
 			//printf("Treating cell %d \n", numCell);
-
-			diffusionHorizontaleT(numCell);
+			//if(numCell < 0 || numCell > nbCellSection) printf("OHOHOHOHOHO");
+			diffusionHorizontaleT(prevCell, currCell, numCell);
 		}
 		
 		int bar = pthread_barrier_wait(&barrier);
@@ -104,9 +100,10 @@ void *updatePlaqueThread(void *arg) {
 		else if(bar==PTHREAD_BARRIER_SERIAL_THREAD) {
 			//printf("Looks like all thread is finished \n");
 				////float *temp = prevCell;
-				////prevCell = currCell;
+				//prevCell = currCell;
 				////currCell = temp;
-			copyPlaque(currCell, prevCell, nbLigne*nbLigne);
+			//copyPlaque(currCell, prevCell, nbLigne*nbLigne);
+			//swapCell(&currCell, &prevCell);
 
 		}
 		
@@ -127,39 +124,44 @@ void *updatePlaqueThread(void *arg) {
 			else if(bar==PTHREAD_BARRIER_SERIAL_THREAD) {
 				//printf("Looks like all thread is finished \n");
 				//float *temp = prevCell;
-				//prevCell = currCell;
+				prevCell = currCell;
 				//currCell = temp;
-				copyPlaque(currCell, prevCell, nbLigne*nbLigne);
-
+				//copyPlaque(currCell, prevCell, nbLigne*nbLigne);
+				//swapCell(&currCell, &prevCell);
+				//display(currCell, nbLigne);
 			}
 	}
 }
 
-void testBarriere(float *oldCell, float *newCell, int nbLine, int nbCellule, int argS) {
+void executeBarriere(float *oldCell, float *newCell, int nbLine, int nbCellule, int argS, int argT) {
 	//printf("Calling test barriere %p %p %d", oldCell, newCell, nbLine);
-	int number = 4;
+	int division = 1<<argT; // Si on divise les cellules par 4, donc 2 colonne et 2 lignes, donc cette valeur vaut 2.
+	int nbThread = division*division;
+	
+	/** FOR DEBUG PURPOSE **/
 	int *share;
 	int init = 1;
 	share = &init;
+	/** FIN DEBUG **/
+	
 	int ret;
-	thread_data_t thr_data[number];
-	//printf("Testing barrier %p\n", share);
-	pthread_t threads[number];
+	thread_data_t thr_data[nbThread];
+	//printf("Testing barrier with %d thread \n", division*division);
+	pthread_t threads[nbThread];
 	pthread_attr_t attr;
-	pthread_barrier_init(&barrier,NULL,number);	
+	pthread_barrier_init(&barrier,NULL,nbThread);	
 	
 	prevCell = oldCell;
 	currCell = newCell;
 	nbCell = nbCellule;
 	nbLigne = nbLine;
 	s = argS;
-	int division = 2; // Si on divise les cellules par 4, donc 2 colonne et 2 lignes, donc cette valeur vaut 2.
-	int limit = nbLigne/2;
+	
+	int limit = nbLigne/division;
 	int i;
 	
-	for(i=0;i<number;i++) {
+	for(i=0;i<nbThread;i++) {
 		thr_data[i].tid = i;
-		thr_data[i].sharedNumber = share;
 		thr_data[i].limit = limit;
 		thr_data[i].leftOffset = i%division*limit;
 		thr_data[i].topOffset = i/division*limit;
@@ -173,7 +175,7 @@ void testBarriere(float *oldCell, float *newCell, int nbLine, int nbCellule, int
 		}
 	}
 	
-	for(i=0; i<number; i++)
+	for(i=0; i<nbThread; i++)
 	{
 		pthread_join(threads[i], NULL);
 	}
