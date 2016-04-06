@@ -10,6 +10,7 @@ typedef struct _thread_data_t {
 	int limit;
 	int leftOffset;
 	int topOffset;
+	int nbLigne;
 	
 } thread_data_t;
 
