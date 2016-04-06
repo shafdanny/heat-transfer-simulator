@@ -4,6 +4,8 @@
 #include <stdbool.h>
 
 typedef struct _thread_data_t {
+	float *cell1;
+	float *cell2;
 	int tid;
 	int limit;
 	int leftOffset;

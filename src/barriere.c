@@ -14,8 +14,7 @@
 #include "plaque.h"
 
 pthread_barrier_t barrier;
-float *prevCell;
-float *currCell;
+
 
 int H = 2;
 
@@ -42,17 +41,17 @@ void diffusionHorizontaleT(float* cell1, float* cell2, int numCell) {
 	
 }
 
-void diffusionVerticaleT(int numCell) {
+void diffusionVerticaleT(float* cell1, float* cell2, int numCell) {
 
 		float prevTopCell = 0.0;
 		float prevBottomCell = 0.0;
 
 		//printf("Checking cell %d \n", numCell);
 		if(!isZoneInterne(numCell,s)) {
-			prevTopCell = (numCell/nbLigne == 0) ? TEMP_FROID : prevCell[numCell-nbLigne];
-			prevBottomCell = (numCell/nbLigne == nbLigne-1) ? TEMP_FROID : prevCell[numCell+nbLigne];
+			prevTopCell = (numCell/nbLigne == 0) ? TEMP_FROID : cell1[numCell-nbLigne];
+			prevBottomCell = (numCell/nbLigne == nbLigne-1) ? TEMP_FROID : cell1[numCell+nbLigne];
 
-			currCell[numCell] = (prevTopCell + (H-2)*(prevCell[numCell]) + prevBottomCell)/H;
+			cell2[numCell] = (prevTopCell + (H-2)*(cell1[numCell]) + prevBottomCell)/H;
 		}
 }
 
@@ -72,6 +71,8 @@ void *updatePlaqueThread(void *arg) {
 	int leftOffset = data->leftOffset;
 	int topOffset = data->topOffset;
 	int id = data->tid;
+	float *cell1 = data->cell1;
+	float *cell2 = data->cell2;
 		
 	int i, iter;
 	
@@ -90,7 +91,7 @@ void *updatePlaqueThread(void *arg) {
 			int numCell = ((i/limit)*nbLigne + topOffset*nbLigne ) + ((i%limit) +  leftOffset);
 			//printf("Treating cell %d \n", numCell);
 			//if(numCell < 0 || numCell > nbCellSection) printf("OHOHOHOHOHO");
-			diffusionHorizontaleT(prevCell, currCell, numCell);
+			diffusionHorizontaleT(cell1, cell2, numCell);
 		}
 		
 		int bar = pthread_barrier_wait(&barrier);
@@ -114,7 +115,7 @@ void *updatePlaqueThread(void *arg) {
 		
 			int numCell = ((i/limit)*nbLigne + topOffset*nbLigne ) + ((i%limit) +  leftOffset);
 	
-			diffusionVerticaleT(numCell);
+			diffusionVerticaleT(cell2, cell1, numCell);
 		}
 		
 		bar = pthread_barrier_wait(&barrier);
@@ -124,7 +125,7 @@ void *updatePlaqueThread(void *arg) {
 			else if(bar==PTHREAD_BARRIER_SERIAL_THREAD) {
 				//printf("Looks like all thread is finished \n");
 				//float *temp = prevCell;
-				prevCell = currCell;
+				//prevCell = currCell;
 				//currCell = temp;
 				//copyPlaque(currCell, prevCell, nbLigne*nbLigne);
 				//swapCell(&currCell, &prevCell);
@@ -151,13 +152,10 @@ void executeBarriere(float *oldCell, float *newCell, int nbLine, int nbCellule, 
 	pthread_attr_t attr;
 	pthread_barrier_init(&barrier,NULL,nbThread);	
 	
-	prevCell = oldCell;
-	currCell = newCell;
-	nbCell = nbCellule;
 	nbLigne = nbLine;
 	s = argS;
 	
-	int limit = nbLigne/division;
+	int limit = nbLine/division;
 	int i;
 	
 	for(i=0;i<nbThread;i++) {
@@ -165,6 +163,8 @@ void executeBarriere(float *oldCell, float *newCell, int nbLine, int nbCellule, 
 		thr_data[i].limit = limit;
 		thr_data[i].leftOffset = i%division*limit;
 		thr_data[i].topOffset = i/division*limit;
+		thr_data[i].cell1 = oldCell;
+		thr_data[i].cell2 = newCell;
 		
 		//printf("Creating thread %d %d \n", thr_data[i].leftOffset, thr_data[i].topOffset);
 
