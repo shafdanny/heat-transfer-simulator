@@ -14,6 +14,7 @@
 
 pthread_mutex_t mutex;
 pthread_cond_t cond;
+
 int totalThread = 0;
 int remainingThread = 0;
 
@@ -46,8 +47,7 @@ void *updatePlaqueThreadMaBarriere(void *arg) {
 	
 	for(iter=0;iter<10000;iter++) {
 		//printf("Iteration %d", iter);
-		
-		//copyPlaque(currCell, prevCell, nbLigne*nbLigne);
+	
 		
 		for(i=0;i<nbCellSection;i++) {
 			//calculer le numero de cellule à traiter

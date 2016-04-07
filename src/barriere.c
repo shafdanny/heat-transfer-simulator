@@ -93,7 +93,7 @@ void *updatePlaqueThread(void *arg) {
 			//calculer le numero de cellule à traiter
 			int numCell = ((i/limit)*nbLigne + topOffset*nbLigne ) + ((i%limit) +  leftOffset);
 			//printf("Treating cell %d \n", numCell);
-			//if(numCell < 0 || numCell > nbCellSection) printf("OHOHOHOHOHO");
+			
 			diffusionHorizontaleT(cell1, cell2, nbLigne, numCell);
 		}
 		
